@@ -1,0 +1,168 @@
+{
+  "$schema": "node_modules/albatros/schema.json",
+  "name": "ru.dkorchemnyi.topomatic360.bcf",
+  "displayName": "BCF Coordinator",
+  "version": "0.2.0",
+  "description": "BCF issue coordination plugin for Topomatic 360",
+  "main": "src/index.ts",
+  "sdk": "^1.4.0",
+  "apx": true,
+  "scripts": {
+    "build": "albatros-cli build",
+    "serve": "albatros-cli serve",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmitrii-korchemnyi/dkorchemnyi.topomatic360.bcf"
+  },
+  "author": {
+    "name": "Dmitrii Korchemnyi"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "albatros": "^1.4.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "xmlbuilder2": "^3.1.1"
+  },
+  "albatros": {
+    "actions": {
+      "bcf_open_topic": {
+        "label": "Открыть замечание",
+        "cmd": "bcf_open_topic",
+        "description": "Открыть активное замечание BCF",
+        "icon": "visibility"
+      },
+      "bcf_import_archive": {
+        "label": "Импорт BCFZIP",
+        "cmd": "bcf_import_archive",
+        "description": "Импорт архива BCFZIP",
+        "icon": "file_open"
+      },
+      "bcf_export_archive": {
+        "label": "Экспорт BCFZIP",
+        "cmd": "bcf_export_archive",
+        "description": "Экспорт архива BCFZIP",
+        "icon": "download"
+      },
+      "bcf_create_topic": {
+        "label": "Создать замечание",
+        "cmd": "bcf_create_topic",
+        "description": "Создать замечание BCF по текущему выделению",
+        "icon": "add_comment"
+      },
+      "bcf_add_comment": {
+        "label": "Добавить комментарий",
+        "cmd": "bcf_add_comment",
+        "description": "Добавить комментарий к активному замечанию",
+        "icon": "comment"
+      },
+      "bcf_quick_list": {
+        "label": "Список замечаний",
+        "cmd": "bcf_quick_list",
+        "description": "Выбрать замечание из списка",
+        "icon": "list"
+      },
+      "bcf_refresh_tree": {
+        "label": "Обновить",
+        "cmd": "bcf_refresh_tree",
+        "description": "Обновить дерево замечаний",
+        "icon": "refresh"
+      },
+      "bcf_delete_topic": {
+        "label": "Удалить замечание",
+        "cmd": "bcf_delete_topic",
+        "description": "Удалить активное замечание",
+        "icon": "delete"
+      },
+      "bcf_debug_context": {
+        "label": "Диагностика контекста",
+        "cmd": "bcf_debug_context",
+        "description": "Вывести диагностическую информацию о текущем контексте",
+        "icon": "bug_report"
+      }
+    },
+    "menu": [
+      {
+        "label": "BCF",
+        "submenu": [
+          { "action": "bcf_open_topic" },
+          { "action": "bcf_quick_list" },
+          { "tag": "s" },
+          { "action": "bcf_create_topic" },
+          { "action": "bcf_add_comment" },
+          { "tag": "s" },
+          { "action": "bcf_import_archive" },
+          { "action": "bcf_export_archive" },
+          { "tag": "s" },
+          { "action": "bcf_refresh_tree" },
+          { "action": "bcf_debug_context" }
+        ]
+      }
+    ],
+    "context": {
+      "bcfTopicContext": [
+        { "action": "bcf_open_topic" },
+        { "action": "bcf_add_comment" },
+        { "tag": "s" },
+        { "action": "bcf_delete_topic" }
+      ],
+      "bcfCommentContext": [
+        { "action": "bcf_open_topic" }
+      ],
+      "bcfViewpointContext": [
+        { "action": "bcf_open_topic" }
+      ]
+    },
+    "pages": [
+      {
+        "tag": "bcf_tools",
+        "label": "BCF",
+        "groups": [
+          {
+            "tag": "bcf_main_group",
+            "label": "Замечания",
+            "items": [
+              { "tag": "b", "action": "bcf_open_topic" },
+              { "tag": "b", "action": "bcf_quick_list" },
+              { "tag": "s" },
+              { "tag": "b", "action": "bcf_create_topic" },
+              { "tag": "b", "action": "bcf_add_comment" },
+              { "tag": "s" },
+              { "tag": "b", "action": "bcf_import_archive" },
+              { "tag": "b", "action": "bcf_export_archive" }
+            ]
+          }
+        ]
+      }
+    ],
+    "viewsContainers": {
+      "bcf_container": {
+        "label": "BCF",
+        "icon": "assignment",
+        "container": "left"
+      }
+    },
+    "views": {
+      "bcf_tree": {
+        "label": "Замечания BCF",
+        "type": "treeview",
+        "cmd": "bcf_tree_provider",
+        "container": "bcf_container"
+      }
+    },
+    "statusbar": {
+      "bcf_status": {
+        "alignment": "right",
+        "name": "BCF",
+        "label": "BCF",
+        "description": "Открыть список замечаний BCF",
+        "cmd": "bcf_quick_list",
+        "priority": 60
+      }
+    }
+  }
+}
