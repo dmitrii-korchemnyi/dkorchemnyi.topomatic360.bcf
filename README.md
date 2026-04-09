@@ -1,48 +1,34 @@
-# bcf.topomatic360
+# BCF Manager for Topomatic 360
 
-Плагин BCF для Topomatic 360.
+Refactored plugin for Topomatic 360 / Albatros.
 
-Открывает замечания из BCF, просматривает viewpoints и выгружает их обратно в BCF прямо внутри платформы Томатик360.
+## What is inside
 
-Автор: Дмитрий Корчемный
+- import/export of BCFZIP with selectable BCF versions 2.0 / 2.1 / 3.0
+- separate manager window and editor window in BIMcollab-like workflow
+- Russian UI
+- tree view with topics / viewpoints / comments
+- manifest aligned with Albatros actions / menu / pages / views / statusbar
 
----
+## Project structure
 
-## Статус
+- `src/commands` — command handlers
+- `src/providers` — treeview providers
+- `src/application` — use cases
+- `src/bcf` — BCF import/export engine
+- `src/topomatic` — Topomatic host adapter
+- `src/ui` — dialogs
+- `src/domain` — models and contracts
 
-Прототип. Основная логика реализована, интеграция с API Topomatic 360 находится в процессе.
+## Build on Windows
 
----
-
-## Возможности
-
-* Импорт BCFZIP
-* Экспорт BCFZIP
-* Отображение списка замечаний
-* Навигация по viewpoint (частично)
-* Добавление комментариев
-* Хранение данных в памяти
-
----
-
-## Разработка
-
-```bash
+```powershell
 npm install
-npm run check
+npm run typecheck
 npm run build
 npm run serve
 ```
 
----
+## Install
 
-## Установка
-
-Плагин распространяется через GitHub Pages.
-https://dmitrii-korchemnyi.github.io/dkorchemnyi.topomatic360.bcf/
-
----
-
-## Лицензия
-
-MIT
+Build output is generated into `dist/` and can be published to GitHub Pages or packed as APX.

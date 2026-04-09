@@ -1,9 +1,7 @@
-export type BcfVersion = "2.1" | "3.0" | "3.1";
-
-export type IssueStatus = "Активно" | "Устранено" | "Закрыто";
-export type IssuePriority = "Не задан" | "Низкий" | "Обычный" | "Высокий" | "Критический";
-export type IssueType = "Замечание" | "Коллизия" | "Проверка" | "Вопрос" | "Предложение" | "Ошибка моделирования";
-export type ComponentsMode = "Видимые" | "Выбранные" | "Все связанные";
+export type BcfVersion = "2.0" | "2.1" | "3.0";
+export type IssueStatus = "Новая" | "Активно" | "В работе" | "Устранено" | "Закрыто" | "Переоткрыто";
+export type IssuePriority = "Низкий" | "Обычный" | "Высокий" | "Критический";
+export type IssueType = "Замечание" | "Коллизия" | "Проверка" | "Вопрос" | "Предложение";
 
 export interface Point3D {
   x: number;
@@ -19,24 +17,25 @@ export interface CameraState {
 }
 
 export interface ComponentRef {
+  guid: string;
   elementId?: string;
   ifcGuid?: string;
   modelRef?: string;
   layerName?: string;
   elementName?: string;
   elementType?: string;
-  selected?: boolean;
+  authoringToolId?: string;
   visible?: boolean;
-  color?: string;
+  selected?: boolean;
 }
 
 export interface Viewpoint {
   guid: string;
   title?: string;
+  index: number;
   snapshotFileName?: string;
   snapshotBase64?: string;
   camera?: CameraState;
-  componentsMode: ComponentsMode;
   components: ComponentRef[];
 }
 
@@ -45,8 +44,9 @@ export interface CommentItem {
   author: string;
   date: string;
   message: string;
-  modifiedDate?: string;
+  viewpointGuid?: string;
   modifiedAuthor?: string;
+  modifiedDate?: string;
 }
 
 export interface IssueTopic {
@@ -62,6 +62,7 @@ export interface IssueTopic {
   area?: string;
   milestone?: string;
   deadline?: string;
+  stage?: string;
   creationAuthor: string;
   creationDate: string;
   modifiedAuthor?: string;
@@ -73,21 +74,16 @@ export interface IssueTopic {
 export interface IssueProject {
   projectId: string;
   name: string;
-  version: BcfVersion;
   topics: IssueTopic[];
+  formatVersion: BcfVersion;
 }
 
-export interface TopicEditorInput {
-  guid?: string;
-  number?: number;
-  title: string;
-  description: string;
-  status: IssueStatus;
-  priority: IssuePriority;
-  type: IssueType;
-  labels: string[];
-  assignedTo?: string;
-  area?: string;
-  milestone?: string;
-  deadline?: string;
+export interface ValidationMessage {
+  level: "info" | "warning" | "error";
+  message: string;
+}
+
+export interface ValidationResult {
+  ok: boolean;
+  messages: ValidationMessage[];
 }
