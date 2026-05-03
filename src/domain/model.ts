@@ -53,6 +53,7 @@ export interface InternalBcfViewpoint {
   guid: string;
   index: number;
   filename: string;
+  nativeViewState?: unknown;
   snapshot?: InternalBcfSnapshot;
   perspectiveCamera?: InternalBcfPerspectiveCamera;
   orthogonalCamera?: InternalBcfOrthogonalCamera;

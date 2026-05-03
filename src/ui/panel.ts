@@ -1,6 +1,9 @@
 import { issueStore } from "../application/issue-store";
 import { isClosedIssue } from "../application/issue-service";
 import type { InternalBcfIssue } from "../domain/model";
+import type { TopomaticContext } from "../topomatic/albatros-types";
+import { createBcfIssueFromTopomatic } from "../topomatic/create-issue-workflow";
+import { applyIssueViewToCadView } from "../topomatic/viewpoint-adapter";
 
 type IssuePatch = Partial<Pick<InternalBcfIssue, "title" | "description" | "assignedTo" | "status" | "type" | "priority">>;
 
@@ -8,7 +11,7 @@ const STATUS_OPTIONS = ["Active", "Resolved", "Открыто", "В работе
 const TYPE_OPTIONS = ["Undefined", "Issue", "Remark", "Clash", "Замечание", "Коллизия", "Информация"];
 const PRIORITY_OPTIONS = ["Undefined", "Low", "Medium", "High", "Низкий", "Средний", "Высокий"];
 
-export function renderBcfPanel(root: HTMLElement): () => void {
+export function renderBcfPanel(root: HTMLElement, ctx?: TopomaticContext): () => void {
   root.innerHTML = "";
 
   const style = document.createElement("style");
@@ -265,7 +268,11 @@ export function renderBcfPanel(root: HTMLElement): () => void {
     const iconbar = document.createElement("div");
     iconbar.className = "bcf-iconbar";
     iconbar.append(
-      button("+", "Создать", () => undefined),
+      button("+", "Создать", () => {
+        if (ctx) {
+          void createBcfIssueFromTopomatic(ctx);
+        }
+      }),
       button("✎", "Редактировать", () => {
         editingGuid = selectedGuid;
         draw();
@@ -342,10 +349,12 @@ export function renderBcfPanel(root: HTMLElement): () => void {
       cells[5].textContent = issue.creationAuthor;
       row.addEventListener("click", () => {
         selectedGuid = issue.guid;
+        applyView(issue);
         draw();
       });
       row.addEventListener("dblclick", () => {
         selectedGuid = issue.guid;
+        applyView(issue);
         editingGuid = issue.guid;
         draw();
       });
@@ -407,6 +416,7 @@ export function renderBcfPanel(root: HTMLElement): () => void {
       textSpan(`Status: ${issue.status}`),
       button("Resolve", "Resolve", () => updateSelected({ status: "Resolved" })),
       button("Resolve and close", "Resolve and close", () => updateSelected({ status: "Resolved" })),
+      button("Viewpoint", "Показать вид замечания", () => applyView(issue)),
       button("Edit issue", "Edit issue", () => {
         editingGuid = issue.guid;
         draw();
@@ -498,6 +508,17 @@ export function renderBcfPanel(root: HTMLElement): () => void {
     }
     issueStore.updateIssue({ ...issue, ...patch, modifiedDate: new Date().toISOString(), modifiedAuthor: "Topomatic 360 User" });
     draw();
+  };
+
+  const applyView = (issue: InternalBcfIssue): void => {
+    if (!ctx?.cadview) {
+      return;
+    }
+
+    const result = applyIssueViewToCadView(ctx.cadview, issue);
+    if (!result.applied && result.warnings.length > 0) {
+      ctx.showMessage(result.warnings[0], "warning");
+    }
   };
 
   const unsubscribe = issueStore.subscribe(draw);

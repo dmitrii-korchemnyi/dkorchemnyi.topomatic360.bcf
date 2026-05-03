@@ -16,8 +16,16 @@ export interface DialogFilter {
 }
 
 export interface DialogOptions {
-  title: string;
+  title?: string;
+  modal?: boolean;
+  resolveTitle?: string;
+  rejectTitle?: string;
+  hideButtons?: boolean;
   filters?: DialogFilter[];
+}
+
+export interface DefinedDialogOptions extends DialogOptions {
+  mount(el: HTMLElement): void;
 }
 
 export interface QuickPickOptions {
@@ -45,12 +53,12 @@ export interface TopomaticContext {
     message?: string;
     onDidBroadcast?: (handler: (event: { event: string }) => void) => void;
   };
-  showMessage(message: string, type?: MessageType, options?: unknown): void;
+  showMessage(message: string | string[], type?: MessageType, options?: unknown): Promise<void> | void;
   showInputBox(options?: InputBoxOptions): Promise<string | undefined>;
   showQuickPick(items: string[], options?: QuickPickOptions): Promise<string | undefined>;
   openDialog(options: DialogOptions): Promise<unknown>;
   saveDialog(options: DialogOptions): Promise<unknown>;
-  showDefinedDialog?(options: { title: string; content: HTMLElement; width?: number; height?: number }): Promise<unknown>;
+  showDefinedDialog?(options: DefinedDialogOptions): Promise<void>;
   createOutputChannel(name: string): OutputChannel;
   setStatusBarMessage(message: string, ...args: unknown[]): Disposable;
   createEventHandler?<T>(): {

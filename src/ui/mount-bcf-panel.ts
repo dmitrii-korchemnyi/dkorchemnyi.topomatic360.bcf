@@ -10,5 +10,5 @@ export async function mount_bcf_panel(ctx: TopomaticContext): Promise<void> {
   ctx.el.innerHTML = "";
   const mountPoint = document.createElement("div");
   ctx.el.append(mountPoint);
-  renderBcfPanel(mountPoint);
+  renderBcfPanel(mountPoint, ctx);
 }
